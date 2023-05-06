@@ -1,0 +1,17 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: mec
+  namespace: default
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/window: 30s
+    spec:
+      containers:
+        - image: docker.io/kiemtcb/detection-object:2.0arm@sha256:27312d86b2cabd1af7a357870eebaf9e4c36e413d5d334c296848b4b9918a72d
+          ports:
+            - containerPort: 8080
+      nodeSelector:
+        kubernetes.io/hostname: jetson
