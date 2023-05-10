@@ -20,5 +20,6 @@ COPY yolov4.weights .
 RUN pip3 install opencv-python
 RUN apt update
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+COPY yolov4.cfg cfg/
 EXPOSE 8080
 CMD ["sh","./run.sh"]
