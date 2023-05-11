@@ -3,33 +3,14 @@ import threading
 import time
 from cv2 import VideoCapture
 import cv2
-from flask import Flask
+from flask import Flask, request,copy_current_request_context
 # import sys, os
 # sys.path.append(os.path.join(os.getcwd(),'python/'))
 import darknet 
 
 
 app = Flask(__name__)
-
-def load_images(images_path):
-    """
-    If image path is given, return it directly
-    For txt file, read it and return each line as image path
-    In other case, it's a folder, return a list with names of each
-    jpg, jpeg and png file
-    """
-    input_path_extension = images_path.split('.')[-1]
-    if input_path_extension in ['jpg', 'jpeg', 'png']:
-        return [images_path]
-    elif input_path_extension == "txt":
-        with open(images_path, "r") as f:
-            return f.read().splitlines()
-    else:
-        return glob.glob(
-            os.path.join(images_path, "*.jpg")) + \
-            glob.glob(os.path.join(images_path, "*.png")) + \
-            glob.glob(os.path.join(images_path, "*.jpeg"))
-
+#app.app_context().push()
 def image_detection(image_or_path, network, class_names, class_colors, thresh):
     # Darknet doesn't accept numpy images.
     # Create one with image we reuse for each detect
@@ -61,7 +42,6 @@ def handle_streaming_thread_init(source, time):
     th.join()
     return 'OK', 200
 
-
 def detect_streaming(rtmp_streaming_url: str, time_to_detect: int):
     path = f"rtmp://{rtmp_streaming_url}/live/stream"
     cap = VideoCapture(path)
@@ -88,6 +68,24 @@ def detect_streaming(rtmp_streaming_url: str, time_to_detect: int):
                 break
     cap.release()
     return
+
+@app.route('/api/picture', methods=['POST'])
+def handle_picture_api():
+    @copy_current_request_context
+    def handle_picture():
+        f = request.files['upload']
+        f.save(f.filename) 
+        image, detections = image_detection(
+                    f.filename, network, class_names, class_colors, 0.25)
+        darknet.print_detections(detections, True)
+    try:
+        th = threading.Thread(target=handle_picture, args=())
+        th.start()
+    except:
+        print("error")
+    th.join()
+    return 'OK', 200
+
 
 @app.route('/api/active', methods=['GET'])
 def active_process():

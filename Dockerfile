@@ -14,12 +14,12 @@ RUN mkdir detection/darknet
 COPY darknet detection/darknet
 WORKDIR detection/darknet
 RUN make
-COPY run.sh .
-COPY main.py .
-COPY yolov4.weights .
 RUN pip3 install opencv-python
 RUN apt update
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+COPY run.sh .
+COPY main.py .
+COPY yolov4.weights .
 COPY yolov4.cfg cfg/
 EXPOSE 8080
-CMD ["sh","./run.sh"]
+CMD ["python3","main.py"]
