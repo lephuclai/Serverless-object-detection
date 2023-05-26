@@ -10,7 +10,7 @@ spec:
         autoscaling.knative.dev/window: 30s
     spec:
       containers:
-        - image: docker.io/kiemtcb/detection-object:4.3x86@sha256:ee2bde5b389b955b5916de2918dc0a38e018991c37b00c7f0656e8a0067afc31
+        - image: docker.io/kiemtcb/detection-object:4.2x86@sha256:326e47e0290094fcfe71e14674173b156bac7e12d211051d77c6e78d37a55d04
           ports:
             - containerPort: 8080
       nodeSelector:

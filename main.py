@@ -120,5 +120,5 @@ def terminate_process():
 
 if __name__ == '__main__':
     network, class_names, class_colors = darknet.load_network(
-        'cfg/yolov4.cfg', 'cfg/coco.data', 'yolov4.weights')
+        'cfg/yolov4-csp.cfg', 'cfg/coco.data', 'yolov4-csp.weights')
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
