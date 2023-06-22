@@ -1,4 +1,4 @@
-FROM nvcr.io/partners/gridai/pytorch-lightning:v1.4.0
+FROM nvcr.io/nvidia/merlin/merlin-pytorch:23.04
 RUN mkdir detection
 COPY requirements.txt detection
 
@@ -16,7 +16,6 @@ WORKDIR detection/darknet
 RUN make
 RUN pip3 install opencv-python
 RUN apt update
-ENV DEBIAN_FRONTEND=noninteractive 
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 COPY run.sh .
 COPY main.py .
