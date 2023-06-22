@@ -1,0 +1,6 @@
+build:
+    script:
+        - docker --version
+        - docker build -t kiemtcb/detection-object:4.5x86 -f Dockerfile .
+    tags:
+        mec
