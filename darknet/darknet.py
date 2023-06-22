@@ -115,6 +115,23 @@ def print_detections(detections, coordinates=False):
         else:
             print("{}: {}%".format(label, confidence))
 
+def print_detections_return(detections, coordinates=False):
+    print("\nObjects:")
+    l = []
+    for label, confidence, bbox in detections:
+        x, y, w, h = bbox
+        if coordinates:
+            l.append("{}: {}%    (left_x: {:.0f}   top_y:  {:.0f}   width:   {:.0f}   height:  {:.0f}) ".format(
+                label, confidence, x, y, w, h))
+            print("{}: {}%    (left_x: {:.0f}   top_y:  {:.0f}   width:   {:.0f}   height:  {:.0f})".format(
+                label, confidence, x, y, w, h))
+        else:
+            l.append("{}: {}% ".format(label, confidence))
+            print("{}: {}%".format(label, confidence))
+    s = ''.join(l)
+    # print(s)
+    return s
+
 
 def draw_boxes(detections, image, colors):
     import cv2

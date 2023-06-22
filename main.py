@@ -105,6 +105,27 @@ def handle_picture_api():
     return 'OK', 200
 
 
+@app.route('/api/picture/return', methods=['POST'])
+def handle_picture_api_return():
+    return_val_from_1 = []
+
+    @copy_current_request_context
+    def handle_picture_return():
+        f = request.files['upload']
+        f.save(f.filename)
+        image, detections = image_detection(
+            f.filename, network, class_names, class_colors, 0.25)
+        return_val_from_1.append(
+            str(darknet.print_detections_return(detections, True)))
+    try:
+        th = threading.Thread(target=handle_picture_return, args=())
+        th.start()
+    except:
+        print("error")
+    th.join()
+    return ''.join(return_val_from_1), 200
+
+
 @app.route('/api/active', methods=['GET'])
 def active_process():
     return 'Active process', 200
