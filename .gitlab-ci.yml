@@ -16,10 +16,22 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
+stages:
+    - build
+    - push_image
+
 build:
+    stage: build
     script:
         - docker --version
-        - docker build -t kiemtcb/detection-object:4.5x86 -f Dockerfile .
+        - docker build -t $DOCKER_USER/detection-object:4.5x86 -f Dockerfile .
+    tags:
+        - mec
+push_image:
+    stage: push_image
+    script:
+        - docker login -u $DOCKER_USER -p $DOCKER_PASS
+        - docker push $DOCKER_USER/detection-object:4.5x86
     tags:
         - mec
 
