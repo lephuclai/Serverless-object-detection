@@ -19,7 +19,7 @@ RUN apt update
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 COPY run.sh .
 COPY main.py .
-COPY yolov4-csp.weights .
 COPY yolov4.cfg cfg/
 EXPOSE 8080
+RUN sh run.sh
 CMD ["python3","main.py"]
