@@ -16,6 +16,7 @@ WORKDIR detection/darknet
 RUN make
 RUN pip3 install opencv-python
 RUN apt update
+ENV DEBIAN_FRONTEND=noninteractive 
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 COPY run.sh .
 COPY main.py .
