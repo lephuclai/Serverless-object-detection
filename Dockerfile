@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/merlin/merlin-pytorch:23.04
+FROM nvcr.io/partners/gridai/pytorch-lightning:v1.4.0
 RUN mkdir detection
 COPY requirements.txt detection
 
