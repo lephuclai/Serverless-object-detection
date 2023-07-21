@@ -1,0 +1,6 @@
+[init]
+	defaultBranch = none
+[fetch]
+	recurseSubmodules = false
+[http "https://gitlab.com"]
+	sslCAInfo = /home/mec/Serverless-object-detection/builds/Dxh1_GNqU/0/kiemtcb/Serverless-object-detection.tmp/CI_SERVER_TLS_CA_FILE

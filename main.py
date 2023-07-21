@@ -62,6 +62,7 @@ def handle_streaming_thread_init(source, time):
 def detect_streaming(rtmp_streaming_url: str, time_to_detect: int):
     path = f"rtmp://{rtmp_streaming_url}/live/stream"
     cap = VideoCapture(path)
+    fps = cap.get(cv2.CAP_PROP_FPS)
     start_time = time.monotonic()
     frame_number = 0
     while (True):
@@ -78,7 +79,7 @@ def detect_streaming(rtmp_streaming_url: str, time_to_detect: int):
             )
             darknet.print_detections(detections, True)
             # r = dn.detect(net, meta, b'frame.jpg')
-            # print(r)
+            print("\n\tFrames per second: {0}".format(fps))
 
             print()
             if time.monotonic() - start_time > time_to_detect:
