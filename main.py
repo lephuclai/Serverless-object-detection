@@ -62,22 +62,29 @@ def handle_streaming_thread_init(source, time):
 def detect_streaming(rtmp_streaming_url: str, time_to_detect: int):
     path = f"rtmp://{rtmp_streaming_url}/live/stream"
     cap = VideoCapture(path)
-    fps = cap.get(cv2.CAP_PROP_FPS)
+    prev_frame_time = 0
+    new_frame_time = 0
+
     start_time = time.monotonic()
     frame_number = 0
     while (True):
         ret, frame = cap.read()
         if ret == True:
+            new_frame_time = time.time()
+            fps = 1/(new_frame_time-prev_frame_time)
+            prev_frame_time = new_frame_time
+            fps = int(fps)
+            fps = str(fps)
             cv2.imwrite("frame.jpg", frame)
             frame_number += 1
             print("** HANDLE FRAME NUMBER : {}\n***TIMESTAMP: {}".format(
                 frame_number, time.strftime("%Y%m%d-%H%M%S")))
-            print("RESULTS:")
+            # print("RESULTS:")
             image_name = 'frame.jpg'
             image, detections = image_detection(
                 image_name, network, class_names, class_colors, 0.25
             )
-            darknet.print_detections(detections, True)
+            # darknet.print_detections(detections, True)
             # r = dn.detect(net, meta, b'frame.jpg')
             print("\n\tFrames per second: {0}".format(fps))
 
