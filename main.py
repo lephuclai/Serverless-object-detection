@@ -101,9 +101,12 @@ def handle_picture_api():
     def handle_picture():
         f = request.files['upload']
         f.save(f.filename)
+        preProcessingTime = time.time()
         image, detections = image_detection(
             f.filename, network, class_names, class_colors, 0.25)
+        
         darknet.print_detections(detections, True)
+        print("\nProcessing Time: "+str(time.time() - preProcessingTime))
     try:
         th = threading.Thread(target=handle_picture, args=())
         th.start()
@@ -121,10 +124,14 @@ def handle_picture_api_return():
     def handle_picture_return():
         f = request.files['upload']
         f.save(f.filename)
+        preProcessingTime = time.time()
         image, detections = image_detection(
             f.filename, network, class_names, class_colors, 0.25)
         return_val_from_1.append(
-            str(darknet.print_detections_return(detections, True)))
+            str(darknet.print_detections_image_return(detections, True)))
+        print("\nProcessing Time: "+str(time.time() - preProcessingTime))
+        return_val_from_1.append("\n" +
+            str(time.time() - preProcessingTime) + "\n")
     try:
         th = threading.Thread(target=handle_picture_return, args=())
         th.start()
