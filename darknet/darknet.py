@@ -155,6 +155,27 @@ def print_detections_image_return(detections, coordinates=False):
     return s
 
 
+def print_detections_image_detec_return(detections, coordinates=False):
+    print("\nObjects:")
+    l = []
+    detec = []
+    for label, confidence, bbox in detections:
+        x, y, w, h = bbox
+        if coordinates:
+            l.append("{}: {}%    (left_x: {:.0f}   top_y:  {:.0f}   width:   {:.0f}   height:  {:.0f}) \n".format(
+                label, confidence, x, y, w, h))
+            print("{}: {}%    (left_x: {:.0f}   top_y:  {:.0f}   width:   {:.0f}   height:  {:.0f})".format(
+                label, confidence, x, y, w, h))
+            detec.append(float(confidence))
+        else:
+            l.append("{}: {}% \n".format(label, confidence))
+            print("{}: {}%".format(label, confidence))
+            detec.append(float(confidence))
+    s = ''.join(l)
+    # print(s)
+    return (sum(detec) / len(detec))
+
+
 def draw_boxes(detections, image, colors):
     import cv2
     for label, confidence, bbox in detections:

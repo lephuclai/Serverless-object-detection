@@ -104,7 +104,7 @@ def handle_picture_api():
         preProcessingTime = time.time()
         image, detections = image_detection(
             f.filename, network, class_names, class_colors, 0.25)
-        
+
         darknet.print_detections(detections, True)
         print("\nProcessing Time: "+str(time.time() - preProcessingTime))
     try:
@@ -131,9 +131,31 @@ def handle_picture_api_return():
             str(darknet.print_detections_image_return(detections, True)))
         print("\nProcessing Time: "+str(time.time() - preProcessingTime))
         return_val_from_1.append("\n" +
-            str(time.time() - preProcessingTime) + "\n")
+                                 str(time.time() - preProcessingTime) + "\n")
     try:
         th = threading.Thread(target=handle_picture_return, args=())
+        th.start()
+    except:
+        print("error")
+    th.join()
+    return ''.join(return_val_from_1), 200
+
+
+@app.route('/api/picture/return/detection', methods=['POST'])
+def handle_picture_api_return_detection():
+    return_val_from_1 = []
+
+    @copy_current_request_context
+    def handle_picture_return_detection():
+        f = request.files['upload']
+        f.save(f.filename)
+        preProcessingTime = time.time()
+        image, detections = image_detection(
+            f.filename, network, class_names, class_colors, 0.25)
+        return_val_from_1.append(
+            str(darknet.print_detections_image_detec_return(detections, True)))
+    try:
+        th = threading.Thread(target=handle_picture_return_detection, args=())
         th.start()
     except:
         print("error")
