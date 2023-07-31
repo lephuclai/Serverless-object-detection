@@ -7,10 +7,14 @@ from flask import Flask, request, copy_current_request_context
 # import sys, os
 # sys.path.append(os.path.join(os.getcwd(),'python/'))
 import darknet
+import logging
 
 
 app = Flask(__name__)
 # app.app_context().push()
+
+
+logging.basicConfig(filename='/record.log', level=logging.DEBUG)
 
 
 def image_detection(image_or_path, network, class_names, class_colors, thresh):
@@ -62,32 +66,33 @@ def handle_streaming_thread_init(source, time):
 def detect_streaming(rtmp_streaming_url: str, time_to_detect: int):
     path = f"rtmp://{rtmp_streaming_url}/live/stream"
     cap = VideoCapture(path)
-    prev_frame_time = 0
-    new_frame_time = 0
-
-    start_time = time.monotonic()
+    t0 = time.monotonic()
+    start_time = t0
+    frame_count = 1
     frame_number = 0
     while (True):
         ret, frame = cap.read()
         if ret == True:
-            new_frame_time = time.time()
-            fps = 1/(new_frame_time-prev_frame_time)
-            prev_frame_time = new_frame_time
-            fps = int(fps)
-            fps = str(fps)
             cv2.imwrite("frame.jpg", frame)
             frame_number += 1
             print("** HANDLE FRAME NUMBER : {}\n***TIMESTAMP: {}".format(
                 frame_number, time.strftime("%Y%m%d-%H%M%S")))
-            # print("RESULTS:")
+            print("RESULTS:")
             image_name = 'frame.jpg'
             image, detections = image_detection(
                 image_name, network, class_names, class_colors, 0.25
             )
-            # darknet.print_detections(detections, True)
+            darknet.print_detections(detections, True)
             # r = dn.detect(net, meta, b'frame.jpg')
-            print("\n\tFrames per second: {0}".format(fps))
 
+            frame_count += 1
+            td = time.monotonic() - t0
+            if td > 1:
+                current_fps = frame_count / td
+                # logging.info('', extra={'fps': f'{current_fps:.2f}'})
+                app.logger.info(f'{current_fps:.2f}')
+                frame_count = 0
+                t0 = time.monotonic()
             print()
             if time.monotonic() - start_time > time_to_detect:
                 break
@@ -179,4 +184,6 @@ def terminate_process():
 if __name__ == '__main__':
     network, class_names, class_colors = darknet.load_network(
         'cfg/yolov4-csp.cfg', 'cfg/coco.data', 'yolov4-csp.weights')
+    # logging.basicConfig(filename='app.log', filemode='a', level=logging.INFO,
+    #                 format='%(asctime)s - %(levelname)s - FPS: %(fps)s')
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
