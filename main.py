@@ -3,7 +3,7 @@ import threading
 import time
 from cv2 import VideoCapture
 import cv2
-from flask import Flask, request, copy_current_request_context
+from flask import Flask, request, copy_current_request_context, send_file
 # import sys, os
 # sys.path.append(os.path.join(os.getcwd(),'python/'))
 import darknet
@@ -179,6 +179,11 @@ def terminate_process():
     IS_TERMINATE = True
     os._exit(0)
     return
+
+@app.route('/download')
+def downloadFile():
+    path = "/record.log"
+    return send_file(path,as_attachment=True)
 
 
 if __name__ == '__main__':
